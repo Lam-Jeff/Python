@@ -17,7 +17,7 @@ def combination (n) :
 
 if __name__ == "__main__" :
     n = input ("Entrez un nombre entre 2 et 12 : ")
-    while n < 2 and n > 12 :
+    while n < 2 or  n > 12 :
         n = input ("Entrez une valeur entre 2 et 12 :")
 
 value = combination (n)
