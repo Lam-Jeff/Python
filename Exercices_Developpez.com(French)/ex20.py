@@ -1,4 +1,4 @@
-#! /usr/bin/python
+#'! /usr/bin/python
 import os
 
 # ex19 with 3 dices
