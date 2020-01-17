@@ -18,7 +18,6 @@ class Player (Enum) :
 
 def play (x, y, board, screen, isMaxPlayer) :
     pos = x * 300 + SIZE  / 6, y * 300 + SIZE / 6
-    print pos
     yellow = 255, 211, 0
     if isMaxPlayer :
         board[x][y] = 1
@@ -33,7 +32,14 @@ def play (x, y, board, screen, isMaxPlayer) :
         pygame.draw.circle (screen, yellow, pos, 80)
 
 def checkFinish(board) :
-    pass
+    test = evaluation (board)
+    if test == 1 :
+        print "You win !"
+        return 0
+    elif test == -1 :
+        print "You lose !"
+        return 0
+    return 1
 
 
 
@@ -69,11 +75,16 @@ def game():
                 if board[event.pos[0]/300][event.pos[1]/300] == -1 :
                     play( event.pos[0]/300, event.pos[1]/300, board, screen, True)
                     ok = True
-                if ok :
+                    flag = checkFinish (board)
+                if ok and flag:
                     ia = findOptimalMove (board)
                     play (ia[0], ia[1], board, screen, False)
-                else :
-                    print "coup incorrect, vous devez rejouer !"
+                    flag = checkFinish (board)
+                elif flag:
+                    print "Incorrect play, try again !"
+                if not isMoveLeft (board) and flag:
+                    print "Draw !"
+                    flag = 0
 
             draw_lines(screen)
         pygame.display.flip()
@@ -170,7 +181,6 @@ def findOptimalMove (board) :
                 if val > best :
                     best = val
                     move = i, j
-    print best
     return move
 
 if __name__ == "__main__" :
