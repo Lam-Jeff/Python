@@ -76,12 +76,13 @@ def game():
                     play( event.pos[0]/300, event.pos[1]/300, board, screen, True)
                     ok = True
                     flag = checkFinish (board)
-                if ok and flag:
+                elif flag:
+                    print "Incorrect play, try again !"
+
+                if ok and flag and isMoveLeft (board):
                     ia = findOptimalMove (board)
                     play (ia[0], ia[1], board, screen, False)
                     flag = checkFinish (board)
-                elif flag:
-                    print "Incorrect play, try again !"
                 if not isMoveLeft (board) and flag:
                     print "Draw !"
                     flag = 0
@@ -143,7 +144,7 @@ def minmax (board, depth, isMaxPlayer) :
         return score - depth
     if score == -1 :
         return score + depth
-    if not isMoveLeft (board) :
+    if not isMoveLeft (board) or depth == 0:
         return 0
     if isMaxPlayer :
         optimal = -float ('inf')
@@ -152,7 +153,7 @@ def minmax (board, depth, isMaxPlayer) :
             for j in range (3) :
                 if board [i][j] == -1 :
                     board [i][j] = Player.X.value
-                    optimal = max (optimal, minmax (board, depth + 1, not isMaxPlayer))
+                    optimal = max (optimal, minmax (board, depth - 1, not isMaxPlayer))
                     board [i][j] = -1
     else :
         optimal =  float ('inf')
@@ -160,7 +161,7 @@ def minmax (board, depth, isMaxPlayer) :
             for j in range (3) :
                 if board[i][j] == -1 :
                     board [i][j] = Player.O.value
-                    optimal = min (optimal, minmax (board, depth + 1, not isMaxPlayer))
+                    optimal = min (optimal, minmax (board, depth - 1, not isMaxPlayer))
                     board [i][j] = -1
     return optimal
 
