@@ -138,51 +138,58 @@ def isMoveLeft (board) :
 
 # Evaluate every plays and return the value
 def minmax (board, depth, isMaxPlayer) :
-    score = evaluation (board)
 
-    if score == 1 :
-        return score - depth
-    elif score == -1 :
-        return score + depth
-    if not isMoveLeft (board) or depth == 0:
-        return 0
+    if not isMoveLeft (board) or  depth == 0:
+        score = evaluation (board)
+        return [-1, -1, score]
     if isMaxPlayer :
-        optimal = -float ('inf')
+        optimal = [-1, -1, -float ('inf')]
 
         for i in range (3) :
             for j in range (3) :
                 if board [i][j] == -1 :
                     board [i][j] = Player.X.value
-                    optimal = max (optimal, minmax (board, depth + 1, not isMaxPlayer))
+                    score = minmax (board, depth - 1, False)
+                    score[0], score[1] = i, j
                     board [i][j] = -1
+                    if score[2] > optimal[2] :
+                        optimal = score
     else :
-        optimal =  float ('inf')
+        optimal = [-1, -1, float ('inf')]
         for i in range (3) :
             for j in range (3) :
                 if board[i][j] == -1 :
                     board [i][j] = Player.O.value
-                    optimal = min (optimal, minmax (board, depth + 1, not isMaxPlayer))
+                    score= minmax (board, depth - 1, True)
+                    score[0], score[1] = i, j
                     board [i][j] = -1
+                    if score[2] < optimal[2] :
+                        optimal = score
     return optimal
+
+
+def empty_cells (board) :
+    count = 0
+    for i in range (3) :
+        for j in range (3) :
+            if board[i][j] == -1 :
+                count += 1
+    return count
 
 
 
 # Main function, return the best move for the IA
 def findOptimalMove (board) :
-    best = - float ('inf')
-    move =-1, -1
+    depth = empty_cells (board)
+    if depth == 9 :
+        i = choice([0, 1, 2])
+        j = choice ([0, 1, 2])
+    else :
+        val = minmax (board, depth , False)
+        i = val[0]
+        j = val[1]
 
-    for i in range (3) :
-        for j in range (3) :
-            if board [i][j] == -1 :
-                board [i][j] = Player.X.value
-                val = minmax (board, 0, False)
-                board [i][j] = -1
-
-                if val > best :
-                    best = val
-                    move = i, j
-    return move
+    return i, j
 
 if __name__ == "__main__" :
     game()
