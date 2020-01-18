@@ -142,7 +142,7 @@ def minmax (board, depth, isMaxPlayer) :
 
     if score == 1 :
         return score - depth
-    if score == -1 :
+    elif score == -1 :
         return score + depth
     if not isMoveLeft (board) or depth == 0:
         return 0
@@ -153,7 +153,7 @@ def minmax (board, depth, isMaxPlayer) :
             for j in range (3) :
                 if board [i][j] == -1 :
                     board [i][j] = Player.X.value
-                    optimal = max (optimal, minmax (board, depth - 1, not isMaxPlayer))
+                    optimal = max (optimal, minmax (board, depth + 1, not isMaxPlayer))
                     board [i][j] = -1
     else :
         optimal =  float ('inf')
@@ -161,7 +161,7 @@ def minmax (board, depth, isMaxPlayer) :
             for j in range (3) :
                 if board[i][j] == -1 :
                     board [i][j] = Player.O.value
-                    optimal = min (optimal, minmax (board, depth - 1, not isMaxPlayer))
+                    optimal = min (optimal, minmax (board, depth + 1, not isMaxPlayer))
                     board [i][j] = -1
     return optimal
 
