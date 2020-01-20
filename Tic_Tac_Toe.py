@@ -33,10 +33,10 @@ def play (x, y, board, screen, isMaxPlayer) :
 
 def checkFinish(board) :
     test = evaluation (board)
-    if test == 1 :
+    if test == 10 :
         print "You win !"
         return 0
-    elif test == -1 :
+    elif test == -10 :
         print "You lose !"
         return 0
     return 1
@@ -80,8 +80,7 @@ def game():
                     print "Incorrect play, try again !"
 
                 if ok and flag and isMoveLeft (board):
-                    ia = findOptimalMove (board)
-                    play (ia[0], ia[1], board, screen, False)
+                    findOptimalMove (board, screen)
                     flag = checkFinish (board)
                 if not isMoveLeft (board) and flag:
                     print "Draw !"
@@ -100,29 +99,29 @@ def evaluation (board) :
     for i in range (3) :
         if board[i][0] == board[i][1] and board[i][1] == board[i][2] :
             if board[i][0] == Player.X.value :
-                return 1
+                return 10
             elif board[i][0] == Player.O.value :
-                return -1
+                return -10
 
     #checking Columns for X or O victory
     for i in range (3) :
             if board[0][i] == board[1][i] and board[1][i] == board[2][i] :
                 if board[0][i] == Player.X.value :
-                    return 1
+                    return 10
                 elif board[0][i] == Player.O.value :
-                    return -1
+                    return -10
 
     #checking Diagonals for X or O victory
     if board[0][0] == board [1][1] and board [1][1] == board [2][2] :
         if board [0][0] == Player.X.value :
-            return 1
+            return 10
         elif board [0][0] == Player.O.value :
-            return -1
+            return -10
     if board[0][2] == board [1][1] and board[1][1] ==  board [2][0]:
         if board [0][2] == Player.X.value :
-            return 1
+            return 10
         elif board [0][2] == Player.O.value :
-            return -1
+            return -10
 
     return 0
 
@@ -139,50 +138,51 @@ def isMoveLeft (board) :
 # Evaluate every plays and return the value
 def minmax (board, depth, isMaxPlayer) :
     score = evaluation (board)
-
-    if score == 1 :
-        return score - depth
-    if score == -1 :
-        return score + depth
-    if not isMoveLeft (board):
+    if not isMoveLeft (board) :
         return 0
+
+    if score != 0 :
+        return -score
     if isMaxPlayer :
-        optimal = float ('inf')
+        optimal = -float ('inf')
 
         for i in range (3) :
             for j in range (3) :
                 if board [i][j] == -1 :
-                    board [i][j] = Player.X.value
-                    optimal = min (optimal, minmax (board, depth + 1, not isMaxPlayer))
+                    board [i][j] = Player.O.value
+                    score = minmax (board, depth + 1, False)
                     board [i][j] = -1
+                    optimal = max (optimal, score)
+        return optimal
     else :
-        optimal =  -float ('inf')
+        optimal =  float ('inf')
         for i in range (3) :
             for j in range (3) :
                 if board[i][j] == -1 :
-                    board [i][j] = Player.O.value
-                    optimal = max (optimal, minmax (board, depth + 1, not isMaxPlayer))
+                    board [i][j] = Player.X.value
+                    score = minmax (board, depth + 1, True)
                     board [i][j] = -1
-    return optimal
+                    optimal = min (score, optimal)
+        return optimal
 
 
 
 # Main function, return the best move for the IA
-def findOptimalMove (board) :
+def findOptimalMove (board, screen) :
     best = - float ('inf')
-    move =-1, -1
+    move =  None
 
     for i in range (3) :
         for j in range (3) :
             if board [i][j] == -1 :
-                board [i][j] = Player.X.value
+                board [i][j] = Player.O.value
                 val = minmax (board, 0, False)
                 board [i][j] = -1
 
                 if val > best :
                     best = val
                     move = i, j
-    return move
+    play (move[0], move[1], board, screen, False)
 
 if __name__ == "__main__" :
     game()
