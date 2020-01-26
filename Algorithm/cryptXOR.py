@@ -4,21 +4,19 @@
 import os
 import argparse
 from base64 import b64encode
+from base64 import b64decode
 
 
 def generateKey (length) :
     return os.urandom (length)
 
 
-def encrypt (message, key) :
+def encrypt_decrypt (message, key) :
     output = ""
     for i in range (len(message)) :
         current = message [i]
         current_key = key[i % len(key)]
         output += chr (ord (current) ^ ord (current_key))
-    return output
-def decrypt (message, key) :
-    output = encrypt (message, key)
     return output
 
 
@@ -38,12 +36,14 @@ if args.encrypt or args.decrypt :
         KEY = args.y
     MESSAGE = args.x
 
-    print "Key : ",b64encode(KEY).decode ('utf8')
+    print "Key : ",b64encode(KEY)
     print "Message : ",MESSAGE
 
 if args.encrypt :
-    print b64encode(encrypt (MESSAGE.encode('utf8'), KEY)).decode ('utf8')
+    print "Encoding..."
+    print b64encode(encrypt_decrypt (MESSAGE.encode ('utf8'), KEY))
 elif args.decrypt :
-    pass
+    print "Decoding..."
+    print b64decode (b64encode (encrypt_decrypt (MESSAGE, KEY) + "===")).decode ('utf8')
 else :
     print "You need an option, please refer to option --help"
